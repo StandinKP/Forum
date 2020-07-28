@@ -1,0 +1,160 @@
+{% extends 'layout.html' %} {% block body %}
+
+<script>
+  function post_comment(id, username) {
+    if (document.getElementById("comment_input").value == "") {
+      return;
+    }
+    const data = {
+      post_id: id,
+      username: username,
+      comment: document.getElementById("comment_input").value,
+    };
+
+    fetch("http://localhost:5000/post_comment/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        //when data recieved
+        document.getElementById("comment_input").value = "";
+
+        var mainDiv = document.createElement("DIV");
+        var ulNode = document.createElement("UL");
+        var liNode1 = document.createElement("LI");
+        var commentNode = document.createTextNode(data["comment"]);
+        liNode1.appendChild(commentNode);
+
+        var liNode2 = document.createElement("LI");
+
+        ulNode.classList.add("comment_list");
+        ulNode.setAttribute("id", "inner_comment_list");
+
+        var smallNode = document.createElement("SMALL");
+        var footerNode = document.createElement("FOOTER");
+        footerNode.classList.add("blockquote-footer");
+        var anchorNode = document.createElement("A");
+        anchorNode.href = "/account/" + data["username"];
+        var citeNode = document.createElement("cite");
+        citeNode.innerHTML = data["username"];
+        footerNode.innerHTML =
+          "Posted by <a href='/account/" +
+          data["username"] +
+          "'> <cite>" +
+          data["username"] +
+          "</cite> </a> on <cite>" +
+          data["posted_on"] +
+          "</cite>";
+        smallNode.appendChild(footerNode);
+        liNode2.appendChild(smallNode);
+
+        ulNode.appendChild(liNode1);
+        ulNode.appendChild(liNode2);
+        mainDiv.appendChild(ulNode);
+        document.getElementById("comment_list").appendChild(mainDiv);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>
+
+<div class="container pt-lg-7 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card shadow border-0 mb-4">
+        <div class="card-body px-lg-4 py-lg-5">
+          <div class="text-center text-black mb-4">
+            <div class="row">
+              <div class="col-lg-12">
+                <article class="media content-section">
+                  <img
+                    class="rounded-circle article-img"
+                    src="{{post.author.profile_pic}}"
+                  />
+                  <div class="media-body">
+                    <h5 class="card-header" style="text-align: left;">
+                      {{ post.title }}
+                    </h5>
+                    <p class="article-content mt-2">
+                      {{ post.content | truncate(100) }}
+                    </p>
+                    <hr />
+                    <footer class="blockquote-footer">
+                      Created by
+                      <a href="/account/{{post.author.username}}"
+                        ><cite>{{post.author.username}}</cite></a
+                      >
+                      on <cite title="Source Title">{{post.created_at}}</cite>
+                    </footer>
+                  </div>
+                </article>
+                {% if session.logged_in %}
+                <a href="/post/{{post.post_id}}/delete"
+                  ><button class="btn btn-primary">Delete this post</button></a
+                >
+                {% endif %}
+                <br />
+                <br />
+                <div class="card-footer text-muted">
+                  {% if post.comments != [] %}
+                  <ul class="comment_list" id="comment_list">
+                    {% for comment in post.comments %}
+                    <div>
+                      <ul class="comment_list" id="inner_comment_list">
+                        <li>{{comment.comment}}</li>
+                        <li>
+                          <small
+                            ><footer class="blockquote-footer">
+                              Posted by
+                              <a href="/account/{{comment.username}}"
+                                ><cite>{{comment.username}}</cite></a
+                              >
+                              on
+                              <cite title="Source Title"
+                                >{{post.created_at}}</cite
+                              >
+                            </footer></small
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <br />
+                    {% endfor %}
+                  </ul>
+                  {% else %}
+                  <ul class="comment_list" id="comment_list">
+                    <br />
+                  </ul>
+
+                  {% endif %} {% if session.logged_in %}
+                  <input
+                    type="text"
+                    id="comment_input"
+                    name="comment"
+                    placeholder="Enter a comment"
+                  />
+                  <input
+                    onclick="post_comment('{{post.post_id}}','{{session.username}}')"
+                    type="button"
+                    class="btn btn-primary"
+                    value="Post comment"
+                  />
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

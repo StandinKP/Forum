@@ -1,0 +1,56 @@
+{% extends "layout.html" %} {% block body %}
+<div class="container pt-lg-7 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow border-0">
+        <div class="card-body px-lg-5 py-lg-5 mt4">
+          <div class="text-center text-dark mb-4">
+            <h3>Create Post</h3>
+          </div>
+          <hr />
+          <form role="form" method="POST" action="">
+            <div class="form-group mb-3 justify-content-center">
+              <div
+                class="input-group input-group-alternative justify-content-center"
+              >
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fas fa-heading"></i
+                  ></span>
+                </div>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Enter Post Title"
+                  style="width: 66.6%;"
+                />
+              </div>
+            </div>
+            <div
+              class="input-group input-group-alternative justift-content-center"
+            >
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-pen"></i></span>
+              </div>
+              <textarea
+                name="content"
+                class="input-group-textarea"
+                placeholder="Enter Content Here"
+                cols="50"
+                rows="5"
+              ></textarea>
+            </div>
+            <div class="form-group text-center">
+              <input
+                type="submit"
+                value="Create Post"
+                class="btn btn-primary my-3"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

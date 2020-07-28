@@ -1,0 +1,124 @@
+{% extends 'layout.html' %} {% block body %}
+
+<style>
+  ul > li {
+    position: relative;
+  }
+
+  .likes_container .likes_detail {
+    position: absolute;
+    top: 1em;
+    left: 0;
+    display: none;
+  }
+
+  .likes_container > .likes_preview:hover ul {
+    display: block;
+  }
+</style>
+
+<script>
+  function like_post(id, username) {
+    fetch("http://localhost:5000/like_post/" + id + "/" + username, {
+      method: "POST",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        document.getElementById(data["post_id"]).innerHTML =
+          data["total_likes"];
+        if (data["new_like"] == "true") {
+          var node = document.createElement("LI");
+          var textnode = document.createTextNode(data["username"]);
+          node.appendChild(textnode);
+          node.classList.add("like_li_element");
+          document.getElementById(data["post_id"] + "_likes").appendChild(node);
+        }
+      });
+  }
+</script>
+
+<div class="container pt-lg-7 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      {% if posts %} {% for post in posts %}
+      <div class="card shadow border-0 mb-4">
+        <div class="card-body px-lg-4 py-lg-5">
+          <div class="text-center text-black mb-4">
+            <div class="row">
+              <div class="col-lg-12">
+                <article class="media content-section">
+                  <img
+                    class="rounded-circle article-img"
+                    src="{{post.author.profile_pic}}"
+                  />
+                  <div class="media-body">
+                    <a class="article-title" href="/post/{{ post.post_id }}"
+                      ><h5 class="card-header" style="text-align: left;">
+                        {{ post.title }}
+                      </h5></a
+                    >
+                    <p class="article-content mt-2">
+                      {{ post.content | truncate(100) }}
+                    </p>
+                    <hr />
+                    <footer class="blockquote-footer">
+                      Created by
+                      <a href="/account/{{post.author.username}}"
+                        ><cite>{{post.author.username}}</cite></a
+                      >
+                      on <cite title="Source Title">{{post.created_at}}</cite>
+                    </footer>
+                  </div>
+                </article>
+              </div>
+              <div class="col-lg-12">
+                {% if session.logged_in %}
+                <button
+                  onclick="like_post('{{post.post_id}}','{{session.username}}')"
+                  type="button"
+                  class="btn btn-info likes-button"
+                >
+                  <i class="fas fa-thumbs-up"></i>
+                  <span id="{{post.post_id}}" class="badge badge-light"
+                    >{{post.likes | length}}</span
+                  >
+                </button>
+                {% else %}
+                <button type="button" class="btn btn-primary likes-button">
+                  <span class="badge badge-light">{{post.likes | length}}</span>
+                  Likes
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="card shadow border-0 mb-4">
+        <div class="card-body px-lg-4 py-lg-5">
+          <div class="text-center content-center text-black mb-4">
+            <div class="row">
+              <div class="col-lg-12">
+                No Posts. Create one now!!
+                <div class="form-group text-center">
+                  <a href="/post/new"
+                    ><input
+                      type="submit"
+                      value="Create Post"
+                      class="btn btn-primary my-3"
+                  /></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

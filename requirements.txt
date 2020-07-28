@@ -1,0 +1,10 @@
+flask
+flask-bcrypt
+flask-pymongo
+flask-mail
+datetime
+pillow
+secrets
+functools
+flask-cors
+itsdangerous
