@@ -1,3 +1,6 @@
+FORUM
+
+How to use:
 1. First pip install all the dependancies from 'requirements.txt' by pip install -r "requirements.txt"
 2. Then create a file named ".env" in the extracted folder.
 3. Then type the following in the ".env" file:
